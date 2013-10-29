@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>RIOT TV - Observe the riot</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/jquery-ui-1.10.3.custom.min.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/jquery-2.0.3.js"></script>
+    <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="js/sigma-0.1.js"></script>
+    <script src="js/sigma.fisheye.js"></script>
+    <script src="js/sigma.change.js"></script>
+    <script src="js/root.js"></script>
+  </head>
+  <body>
+  
+    <div id="app">
+      <div id="head">
+        <img src="img/logo-large.png" width="150" />
+        <div id="head-menu">
+	      <div id="radio">
+	        <input type="radio" id="radio1" name="radio" /><label for="radio1">Choice 1</label>
+	        <input type="radio" id="radio2" name="radio" checked="checked" /><label for="radio2">Choice 2</label>
+	        <input type="radio" id="radio3" name="radio" /><label for="radio3">Choice 3</label>
+	 	</div>
+	 	<div id="colorset">
+	 	  <label for="colorset-node">Node</label>
+	 	  <input type="text" id="colorset-node" name="node" value="node_4"/>
+	 	  <label for="colorset-color">Color</label>
+	 	  <input type="text" id="colorset-color" name="color" value="#fff" />
+	 	  <button>Set</button>
+	 	</div>
+        </div>
+        
+        
+        <h2>RIOT TV:</h2>
+        
+      
+      </div>
+      <div id="cont">
+        <div id="tvscreen">
+        
+        </div>
+      </div>
+      <div id="foot">
+        
+      </div>
+    </div>
+  
+  </body>
+</html>
