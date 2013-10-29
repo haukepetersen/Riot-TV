@@ -22,9 +22,9 @@
 				'repeat': 15,
 			},
 			'showLink': {
-				'duration': 5000,
-				'startWidth': 5,
-				'endWidth': 0.5,
+				'duration': 2500,
+				'startWidth': 30,
+				'endWidth': 1,
 			},
 			'color' : {
 				'step' : 3.0,
@@ -186,6 +186,28 @@
 				node.x = params.pos + (node.size * params.state);
 			}
 		};
+		
+		/**
+		 * Show link
+		 */
+		function doShowLink(changeId) {
+			var opts = self.options.showLink;
+			var params = changes[changeId].params;
+			var edge = changes[changeId].edge;
+			if (!params.duration) {
+				params.duration = opts.duration / self.options.updateInterval;
+				params.step = (opts.startWidth - opts.endWidth) / params.duration;
+				edge.size = opts.startWidth;
+				edge.color = '#33ee66';
+			}
+			--params.duration;
+			edge.size -= params.step;
+			if (params.duration <= 0) {
+				edge.size = opts.endWidth;
+				changes[changeId].toRemove = true;
+			}
+			
+		}
 
 		/**
 		 * Change a color from one to another
