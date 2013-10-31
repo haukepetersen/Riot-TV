@@ -1,0 +1,14 @@
+{
+  "name": "Riot-TV_Anchor",
+  "version": "0.1.0",
+  "description": "Riot-TV data aggregation and visualization server",
+  "main": "anchor.js",
+  "repository": "",
+  "author": "Hauke Petersen <hauke.petersen@fu-berlin.de",
+  "license": "GPLv2",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "json-socket": ">=0.1.2",
+    "socket.io": "*"
+  }
+}
