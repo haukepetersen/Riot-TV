@@ -9,6 +9,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "json-socket": ">=0.1.2",
-    "socket.io": "*"
+    "socket.io": "*",
+    "express": "*"
   }
 }
