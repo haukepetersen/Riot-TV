@@ -1,13 +1,14 @@
 {
   "name": "riot-tv_reporter",
   "version": "0.1.0",
-  "description": "Data gathering for the RIOT-TV WSN visualizer"
+  "description": "Data gathering for the RIOT-TV WSN visualizer",
   "main": "reporter.js",
   "repository": "",
   "author": "Hauke Petersen <hauke.petersen@fu-berlin.de",
   "license": "GPLv2",
   "readmeFilename": "README.md",
   "dependencies": {
-    "json-socket": ">=0.1.2"
+    "json-socket": ">=0.1.2",
+    "serialport": "*"
   }
 }
