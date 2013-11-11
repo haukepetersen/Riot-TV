@@ -22,59 +22,6 @@ $(document).ready(function() {
 	initGraph();
 	initSocket();
 	
-//	//printgraph($("#tvscreen").get(0));
-//
-////	colorNode('node_4', 'rgb(255,255,255)');
-//	//testme();
-//	var a = $("#tvscreen").width();
-//	var b = $("#tvscreen").height();
-//	
-//	var ratio = a / b;
-//	console.log(a / b);
-//	
-//	graph.init($("#tvscreen").get(0), ratio);
-//	graph.redraw();
-//	
-//	graph.colorNode('node_7', '#0f3');
-//	graph.colorEdge('e0_7', '#f00').colorNode('node_9', '#e3e');
-//	
-//	
-//	var min = 6;
-//	var max = 20;
-//	var size = 0;
-//	
-//	graph.getNode('node_8', function(n) {
-//		console.log(n);
-//		n.displaySize = 75;
-//		console.log(n);
-//		n.displayX = 20;
-//	});
-//	
-//	graph.getNode('node_8', function(n) {
-//		n.displayX = 20;
-//		if (n.isFixed) {
-//			console.log(n.label + ' is fixed');
-//		} else {
-//			console.log(n.label + ' is not fixed');
-//		}
-//	});
-//	
-//	graph.redraw();
-//	
-//	setInterval(function() {
-//		graph.getNode('node_8', function(n) {
-//			n.size = Math.sin(size * Math.PI / 180) * (max - min) + min;
-//			size += 5;
-//			
-//			if (size == 180) {
-//				size = 0;
-//			}
-//		});
-//		graph.redraw();
-//	}, 40);	
-//	
-//	console.log('WIDTH: ' + $("#tvscreen").width());
-	
 });
 
 /**
@@ -148,12 +95,12 @@ function onInit(data) {
 };
 
 function onUpdate(data) {
-	if (data.src != data.dst) {
-		var id = data.src +'_' + data.dst;
+	if (data.hopsrc != data.hopdst) {
+		var id = data.hopsrc +'_' + data.hopdst;
 	
-		graph.glow(data.dst);
-		graph.vibrate(data.src);
-		graph.showLink(data.dst, data.src);
+		graph.glow(data.hopdst);
+		graph.vibrate(data.hopsrc);
+		graph.showLink(data.hopdst, data.hopsrc);
 		//	var edge = graph.getEdge(id);
 		//	if (edge == undefined) {
 		//		graph.addEdge(data.src + data.dst, data.src, data.dst, {'color': '#fff',});

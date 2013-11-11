@@ -97,8 +97,21 @@ var JsonSocket = require('json-socket');
 var serverSocket = net.createServer(function(sock) {
 	sock = new JsonSocket(sock);
 	console.log('connection from reporter');
+	// sock.on('data', function(data) {
+	// 	console.log('Got data');
+	// 	console.log(data);
+	// 	var foo = "";
+	// 	for (var i = 0; i < data.length; i++) {
+	// 		foo += String.fromCharCode(data[i]);
+	// 	}
+	// 	console.log(foo);
+	// });
 	sock.on('message', function(data) {
 		console.log(data);
+		clientUpdate(data);
+	});
+	sock.on('error', function(error) {
+		console.log(error);
 	});
 });
 
@@ -111,9 +124,9 @@ var init = function(port) {
 init(BACKEND_PORT);
 
 // dummy update packages
-setInterval(function() {
-	var src = 'sn' + Math.floor(Math.random() * 10);
-	var dst = 'sn' + Math.floor(Math.random() * 10);
-	var data = {'src': src, 'dst': dst, 'type': 'event', 'data': {}, 'time': 1234565,};
-	clientUpdate(data);
-}, 2500);
+// setInterval(function() {
+// 	var src = 'sn' + Math.floor(Math.random() * 10);
+// 	var dst = 'sn' + Math.floor(Math.random() * 10);
+// 	var data = {'hopsrc': src, 'hopdst': dst, 'type': 'event', 'data': {}, 'time': 1234565,};
+// 	clientUpdate(data);
+// }, 2500);
