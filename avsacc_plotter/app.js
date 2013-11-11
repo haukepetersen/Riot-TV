@@ -10,11 +10,13 @@
  */
 const WEB_PORT = 9999;
 const SERIAL_PORT = "/dev/ttyUSB0";
+const LOGFILE = "datalog.txt";
 
 
 /**
  * include dependencies
  */
+var fs = require('fs');
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
@@ -22,12 +24,23 @@ var io = require('socket.io').listen(server);
 var SerialPort = require('serialport').SerialPort;
 
 
-
+/**
+ * open serial port
+ */
 var serialPort = new SerialPort(SERIAL_PORT, 
 	{'baudrate': 115200, 'databits': 8, 'parity': 'none', 'stopbits': 1},
 	false);	
 var buffer = "";
 var clients = [];
+
+/**
+ * open a logfile for printing acc data into
+ */
+var logfile = fs.createWriteStream(LOGFILE);
+logfile.once('open', function() {
+	logfile.write("Time \t Acc_X \t Acc_Y \t Acc_Z\n");
+	console.log("Opened logfile: " + LOGFILE);
+});
 
 /**
  * setup the web server to server static content from the web subfolder and the web/index.html for
@@ -76,6 +89,7 @@ function publishData() {
 		clients.forEach(function(socket) {
 			socket.emit('new data', data);
 		});
+		logData(data);
 	});
 };
 function parseItem(item, fn) {
@@ -85,10 +99,13 @@ function parseItem(item, fn) {
 		fn(acc);
 	}
 };
+function logData(data) {
+	logfile.write(data.time + "\t" + data.abs_x + "\t" + data.abs_y + "\t" + data.abs_z + "\n");
+};
 
 /**
  * start delivering those pages
  */
 server.listen(WEB_PORT, function() {
-	console.log("Started server on port " + WEB_PORT);
+	console.log("Started webserver on port " + WEB_PORT);
 });
