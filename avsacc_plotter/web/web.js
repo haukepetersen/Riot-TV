@@ -90,6 +90,7 @@ var i = 0;
 var sum = 0;
 
 function onData(data) {
+	state(data);
 	var x = data.abs_x;
 	var y = data.abs_y;
 	var z = data.abs_z;
@@ -108,6 +109,117 @@ function onData(data) {
 	}
 	streams.res.append(data.time, res);
 };
+
+
+/**
+ * emit events
+ */
+function onOpenEvt() {
+	console.log('Event Detected: OPEN');
+};
+
+function onCloseEvt() {
+	console.log('Event Detected: CLOSE');
+};
+
+/**
+ * implement a little event detection fsm
+ */
+const DET_THRESHOLD = 20;
+const DET_REPEAT = 5;
+const DET_TIMEOUT = 25;
+
+var timeout = DET_TIMEOUT;
+var repeat = 0;
+var state = fsm.idle;
+
+var fsm = {
+	'idle': function(data) {
+		if (data.abs_z <= DET_THRESHOLD) {
+			timeout = DET_TIMEOUT;
+			repeat = 0;
+			state = fsm.o1;
+			console.log('IDLE -> O1');
+		} else if (data.abs_z >= DET_THRESHOLD) {
+			timeout = DET_TIMEOUT;
+			repeat = 0;
+			state = fsm.c1;
+			console.log('IDLE -> O2');
+		}
+	},
+	'o1': function(data) {
+		if (--timeout == 0) {
+			state = fsm.idle;
+			console.log('O1 -> IDLE');
+			return;
+		}
+		if (data.abs_z <= DET_THRESHOLD) {
+			repeat++;
+		} else if (data.abs_z >= DET_THRESHOLD) {
+			if (repeat >= DET_REPEAT) {
+				timeout = DET_TIMEOUT;
+				repeat = 0;
+				state = fsm.o2;
+				console.log('O1 -> O2');
+			} else {
+				repeat = 0;
+				state = fsm.idle;
+				console.log('O1 -> IDLE');
+			}
+		}
+	},
+	'o2': function(data) {
+		if (--timeout == 0) {
+			state = fsm.idle;
+			console.log('O2 -> IDLE');
+			return;
+		}
+		if (data.abs_z >= DET_THRESHOLD) {
+			if (++repeat >= DET_REPEAT) {
+				onOpenEvt();
+				state = fsm.idle;
+				console.log('O2 -> IDLE');
+			}
+		}
+	},
+	'c1': function(data) {
+		if (--timeout == 0) {
+			state = fsm.idle;
+			console.log('C1 -> IDLE');
+			return;
+		}
+		if (data.abs_z >= DET_THRESHOLD) {
+			repeat++;
+		} else if (data.abs_z <= DET_THRESHOLD) {
+			if (repeat >= DET_REPEAT) {
+				timeout = DET_TIMEOUT;
+				repeat = 0;
+				state = fsm.c2;
+				console.log('C1 -> C2');
+			} else {
+				state = fsm.idle;
+				console.log('C1 -> IDLE');
+			}
+		}
+
+	},
+	'c2': function(data) {
+		if (--timeout == 0) {
+			state = fsm.idle;
+			console.log('C2 -> IDLE');
+			return;
+		}
+		if (data.abs_z <= DET_THRESHOLD) {
+			if (++repeat >= DET_REPEAT) {
+				onCloseEvt();
+				state = fsm.idle;
+				console.log('C2 -> IDLE');
+			}
+		}
+	},
+};
+
+
 },{"./module":2,"jquery-browserify":3,"smoothie":17,"sylvester":18}],2:[function(require,module,exports){
 
 
