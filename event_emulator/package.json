@@ -1,0 +1,14 @@
+{
+  "name": "EventEmulator",
+  "version": "0.0.1",
+  "description": "Send dummy event packages to redis server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hauke Petersen <hauke.petersen@fu-berlin.de>",
+  "license": "GPLv2",
+  "dependencies": {
+    "node-redis": "0.1.x"
+  }
+}
