@@ -26,6 +26,11 @@
 				'startWidth': 30,
 				'endWidth': 1,
 			},
+			'fadeLink': {
+				'duration': 1000,
+				'startWidth': 30,
+				'endWidth': 1,
+			},
 			'color' : {
 				'step' : 3.0,
 				'speed' : 1
@@ -186,28 +191,61 @@
 				node.x = params.pos + (node.size * params.state);
 			}
 		};
-		
+
 		/**
-		 * Show link
+		 * Show a link, will fade from size 0 to the given width and the link will stay visible
 		 */
-		function doShowLink(changeId) {
-			var opts = self.options.showLink;
+		this.showLink = function(edge, color, time, width) {
+			self.fadeLink(edge, color, time, 0, width);
+		};
+
+		/**
+		 * Hide a link, will fade from the current size to 0 in time ms and will be hidden afterwards
+		 */
+		this.hideLink = function(edge, time) {
+			if (edge.hidden == 0) {
+				self.fadeLink(edge, edge.color, time, edge.size, 0);
+			}
+		};
+
+		/** 
+		 * Fade a link from a given size to another given size.
+		 */
+		this.fadeLink = function(edge, color, time, startWidth, endWidth) {
+			var change = {
+				'edge': edge,
+				'params': {
+					'color': color,
+					'duration': time,
+					'startWidth': startWidth,
+					'endWidth': endWidth},
+				'fn': doFadeLink
+			};
+			changes.push(change);
+		}
+
+		/**
+		 * Out an edge
+		 */
+		function doFadeLink(changeId) {
 			var params = changes[changeId].params;
 			var edge = changes[changeId].edge;
-			if (!params.duration) {
-				params.duration = opts.duration / self.options.updateInterval;
-				params.step = (opts.startWidth - opts.endWidth) / params.duration;
-				edge.size = opts.startWidth;
-				edge.color = '#33ee66';
+			if (!params.step) {
+				params.duration = params.duration / self.options.updateInterval;
+				params.step = (params.startWidth - params.endWidth) / params.duration;
+				edge.size = params.startWidth;
+				edge.color = params.color;
+				edge.hidden = 0;
 			}
 			--params.duration;
 			edge.size -= params.step;
 			if (params.duration <= 0) {
-				edge.size = opts.endWidth;
 				changes[changeId].toRemove = true;
+				if (params.endWidth == 0) {
+					edge.hidden = 1;
+				}
 			}
-			
-		}
+		};
 
 		/**
 		 * Change a color from one to another
@@ -229,7 +267,6 @@
 			if (params.state >= 100) {
 				changes[changeId].toRemove = true;
 			}
-
 		}
 
 		/**
@@ -277,15 +314,34 @@
 		}
 	};
 	
-	sigma.publicPrototype.showLink = function(src, dst) {
+	sigma.publicPrototype.showLink = function(src, dst, id, color, time, width) {
 		if (this.change) {
-			var id = src + '_' + dst;
 			var edge = this.change.getEdge(id);
 			if (edge == null) {
 				this.addEdge(id, src, dst);
 				edge = this.change.getEdge(id);
 			}
-			this.change.showLink(edge);
+			this.change.showLink(edge, color, time, width);
+		}
+	};
+
+	sigma.publicPrototype.hideLink = function(id, time) {
+		if (this.change) {
+			var edge = this.change.getEdge(id);
+			if (edge != null) {
+				this.change.hideLink(edge, time);
+			}
+		}
+	}
+
+	sigma.publicPrototype.fadeLink = function(src, dst, id, color, time, startWidth, endWidth) {
+		if (this.change) {
+			var edge = this.change.getEdge(id);
+			if (edge == null) {
+				this.addEdge(id, src, dst);
+				edge = this.change.getEdge(id);
+			}
+			this.change.fadeLink(edge, color, time, startWidth, endWidth);
 		}
 	};
 

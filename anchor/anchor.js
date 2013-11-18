@@ -123,10 +123,12 @@ var init = function(port) {
 
 init(BACKEND_PORT);
 
+/*
 // dummy update packages
-// setInterval(function() {
-// 	var src = 'sn' + Math.floor(Math.random() * 10);
-// 	var dst = 'sn' + Math.floor(Math.random() * 10);
-// 	var data = {'hopsrc': src, 'hopdst': dst, 'type': 'event', 'data': {}, 'time': 1234565,};
-// 	clientUpdate(data);
-// }, 2500);
+ setInterval(function() {
+ 	var src = 'sn' + Math.floor(Math.random() * 10);
+ 	var dst = 'sn' + Math.floor(Math.random() * 10);
+ 	var data = {'hopsrc': src, 'hopdst': dst, 'type': 'event', 'data': {}, 'time': 1234565,};
+ 	clientUpdate(data);
+ }, 2500);
+ */
