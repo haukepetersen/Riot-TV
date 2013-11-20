@@ -113,18 +113,18 @@ function parseLine(line, cb) {
 		switch (part[0]) {
 			case "m:":
 				res = {
-					"hopsrc": part[6],
-					"hopdst": part[1],
+					"hopsrc": part[8],
+					"hopdst": part[2],
 					"group": "rpl",
-					"type": part[4],
-					"payload": part[7],
+					"type": part[5],
+					"payload": part[9],
 					"time": new Date().getTime()
 				};
 			break;
 			case "p_s:":
 				res = {
-					"hopsrc": part[3],
-					"hopdst": part[1],
+					"hopsrc": part[5],
+					"hopdst": part[2],
 					"group": "rpl",
 					"type": "parent_select",
 					"time": new Date().getTime()
@@ -132,8 +132,8 @@ function parseLine(line, cb) {
 			break;
 			case "p_d:":
 				res = {
-					"hopsrc": part[3],
-					"hopdst": part[1],
+					"hopsrc": part[5],
+					"hopdst": part[2],
 					"group": "rpl",
 					"type": "parent_delete",
 					"time": new Date().getTime()
@@ -147,28 +147,28 @@ function parseLine(line, cb) {
 }
 
 /**
- * Debugging information and tests
+ * Debugging the parser
  */
-var m1 = "m: sn7 received msg TYPE_123 from sn8 #color1";
-var m2 = "p_s: sn4 selected sn7 as parent";
-var m3 = "p_d: sn1 deleted sn4 as parent";
-var m4 = "m: gw received msg TYPE_234 from sn1 #color7";
+// var m1 = "m: ID 149 received msg DIO from ID 150 #color6 - Rank 256";
+// var m2 = "p_s: ID sn4 selected ID sn7 as parent - some stupid output that concerns no one";
+// var m3 = "p_d: ID sn1 deleted ID sn4 as parent";
+// var m4 = "m: ID gw received msg TYPE_234 from ID sn1 #color7";
 
-function res(data) {
-	report(data);
-	console.log(data);
-}
+// function res(data) {
+// 	report(data);
+// 	console.log(data);
+// }
 
-setTimeout(function() {
-	console.log(m1);
-	parseLine(m1, res);
-	console.log(m2);
-	parseLine(m2, res);
-	console.log(m3);
-	parseLine(m3, res);
-	console.log(m4);
-	parseLine(m4, res);
-}, 500);
+// setTimeout(function() {
+// 	console.log(m1);
+// 	parseLine(m1, res);
+// 	console.log(m2);
+// 	parseLine(m2, res);
+// 	console.log(m3);
+// 	parseLine(m3, res);
+// 	console.log(m4);
+// 	parseLine(m4, res);
+// }, 500);
 
 // var data = {
 // 	'src': 'node_0',
