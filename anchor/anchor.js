@@ -35,6 +35,7 @@ var fs = require('fs');
  */
 var clients = [];									// list of clients connected to the anchor
 var graphData;										// the initial graph as read from the graph.json file
+var reporters = [];
 
 /**
  * Read graph.json file from filesystem
@@ -94,12 +95,25 @@ server.listen(APP_PORT, function() {
 io.set('log level', 1);
 io.sockets.on('connection', function(socket) {
 	clients.push(socket);
+	socket.on('console', function(data) {
+		console.log('TODO NEW CONSOLE DATA');
+		//socket.emit('console', {'time': new Date().getTime(), 'node': 'sn9', 'data': data.data + " with love from anchor"});
+		reporters.forEach(function(reporter) {
+			reporter.socket.sendMessage(data);
+		});
+	});
 	socket.emit('init', graphData);	
 });
 
 function clientUpdate(data) {
 	clients.forEach(function(socket) {
 		socket.emit('update', data);
+	});
+}
+
+function clientSendRaw(data) {
+	clients.forEach(function(socket) {
+		socket.emit('console', data);
 	});
 }
 
@@ -111,6 +125,7 @@ var JsonSocket = require('json-socket');
 
 var serverSocket = net.createServer(function(sock) {
 	sock = new JsonSocket(sock);
+	reporters.push({'id': 'TODO', 'socket': sock});
 	console.log('connection from reporter');
 	// sock.on('data', function(data) {
 	// 	console.log('Got data');
@@ -122,11 +137,19 @@ var serverSocket = net.createServer(function(sock) {
 	// 	console.log(foo);
 	// });
 	sock.on('message', function(data) {
-		console.log(data);
-		clientUpdate(data);
+		if (data.type == 'raw') {
+			console.log("TODO NEW UART DATA");
+			data.node = 'sn2';
+			clientSendRaw(data);
+		} else {
+			clientUpdate(data);
+		}
 	});
 	sock.on('error', function(error) {
 		console.log(error);
+	});
+	sock.on('close', function() {
+		console.log("TODO: REPORTER DISCONNECTED");
 	});
 });
 

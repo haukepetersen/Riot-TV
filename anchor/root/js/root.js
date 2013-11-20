@@ -12,9 +12,16 @@
  */
 const GRAPH_PANE = '#tvscreen';
 
-var socket = undefined;
+/**
+ * Some global variables
+ */
 var graph = undefined;
+var socket = undefined;
+var isConnected = false;
 
+/**
+ * Pre-Defined coloring for the visulization
+ */
 var colors = {
 	'color0':  '#004CFF',		// blue (fast) fading arrow (-> send DIO)
 	'color1':  '#FFCC00',		// orange (fast) fading arrow (-> send TVO upwards: TRAIL request)
@@ -34,35 +41,64 @@ var colors = {
 	'color15': '#009DFF',		// thin bright blue line (-> selected parent)
 };
 
+/**
+ * Pre-Defined fading intervals for the visualization
+ */
 var fading = {					// fading speed in ms
 	'superfast': 50,
 	'fast': 500,
 	'normal': 2000,
 	'slow': 5000,
-}
+};
 
+/**
+ * Bootstrap the whole javascript klim-bim only after the page was fully loaded
+ */
 $(document).ready(function() {
 	console.log('hello jquery');
 
 	initUi();
 	initGraph();
-	initSocket();
-	
+	initSocket();	
 });
 
 /**
  * Initialize the GUI elements.
  */
 function initUi() {
-	$("button").button().click(function() {
-		var node = $("#colorset-node").val();
-		var color = $("#colorset-color").val();
-		graph.colorNode(node, color);
+	$("body").keypress(function(event) {
+		if (event.which == 94) {
+			consoleToggle();
+			return false;
+		}
 	});
+	$("#console-send").button().click(consoleSend);
+	$("#console-input").keypress(function(event) {
+		if (event.which == 13) {
+			consoleSend();
+		}
+	});
+	$("#console-showhide").click(consoleToggle);
 	$(".ui-slider").slider();
 	$("#radio").buttonset().click(function() {
 		graph.glow('node_5');
 	});
+};
+
+function consoleSend() {
+	socket.emit('console', {'dst': ['12', '23'], 'data': $("#console-input").val()});
+	$("#console-input").val('');
+};
+
+function consoleToggle() {
+	var button = $("#console-showhide");
+	if (button.hasClass("show")) {
+		$("#console").slideDown();
+	} else {
+		$("#console").slideUp();
+	}
+	button.toggleClass("show");
+	button.toggleClass("hide");
 };
 
 /**
@@ -73,6 +109,7 @@ function initSocket() {
 	socket.on('connect', function() {
 		console.log('Connected to socket.io server');
 		socket.emit('status', '{online: true}');
+		isConnected = true;
 	});
 	socket.on('connect_failed', function() {
 		console.log('Connection to localhost failed');
@@ -82,6 +119,7 @@ function initSocket() {
 	});
 	socket.on('update', onUpdate);
 	socket.on('init', onInit);
+	socket.on('console', onConsole);
 };
 
 /**
@@ -142,6 +180,13 @@ function onUpdate(data) {
 		}
 	}
 };
+
+function onConsole(data) {
+	var out = $("#console-output");
+	var string = new Date(data.time).toLocaleString() + " [" + data.node + "] " + data.data + "\n";
+	out.val(out.val() + string);
+	out.scrollTop(out[0].scrollHeight - out.height());
+}
 
 function event_m(evt) {
 	var id = evt.hopsrc + "_" + evt.hopdst + "-" + evt.payload;

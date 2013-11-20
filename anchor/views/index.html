@@ -14,9 +14,8 @@
     <script src="js/root.js"></script>
   </head>
   <body>
-  
-    <div id="app">
-      <div id="head">
+
+      <div id="layout-head">
         <img src="img/logo-large.png" width="150" />
         <!--
         <div id="head-menu">
@@ -37,18 +36,39 @@
         -->
         
         <h2>RIOT TV:</h2>
-        
-      
       </div>
-      <div id="cont">
-        <div id="tvscreen">
-        
+
+
+      <div id="layout-cont">
+        <div id="tvscreen"></div>
+        testme
+      </div>
+
+
+      <div id="layout-foot">
+        <div id="console-showhide" class="show"></div>
+        <div id="logo-bar">
+          <img src="img/logo_davico.png" alt="Logo Davico" />
+          <img src="img/logo_flughafen.png" alt="Logo Flughafen" />
+          <img src="img/logo_forum.png" alt="Logo Forum" />
+          <img src="img/logo_frauenhofer.png" alt="Logo Frauenhofer" />
+          <img src="img/logo_fu.png" alt="Logo FU" />
+          <img src="img/logo_haw.png" alt="Logo HAW" />
+          <img src="img/logo_inria.png" alt="Logo Inria" />
+          <img src="img/logo_sagem.png" alt="Logo Sagem" />
         </div>
       </div>
-      <div id="foot">
-        
+
+
+      <div id="console">
+        <div id="console-inner">
+          <textarea id="console-output"></textarea>
+          Node 1<input id="console-node-1" type="checkbox" />
+          Node 2<input id="console-node-2" type="checkbox" />
+          <input id="console-input" type="text" />
+          <button id="console-send" value="Send" />
+        </div>
       </div>
-    </div>
-  
+
   </body>
 </html>

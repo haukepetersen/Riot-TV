@@ -25,23 +25,31 @@ const DEFAULT_SERIAL_PORT= '/dev/ttyUSB0';		/* serial port to open */
  */
 var net = require('net');
 var	JsonSocket = require('json-socket');
-var SerialPort = require('serialport').SerialPort;
+var serialPort = require('serialport');
+var SerialPort = serialPort.SerialPort;
 
 /**
  * Global variables
  */
 var socket = new JsonSocket(new net.Socket());	/* connection to the anchor */
 var isConnected = false;						/* flag signals if the reporter is connected to the anchor */
-var serialPort = new SerialPort(DEFAULT_SERIAL_PORT, 
-	{'baudrate': 115200, 'databits': 8, 'parity': 'none', 'stopbits': 1},
+var uart = new SerialPort(DEFAULT_SERIAL_PORT, 
+	{'baudrate': 115200, 'databits': 8, 'parity': 'none', 'stopbits': 1, 'parser': serialPort.parsers.readline("\n")},
 	false);										/* connection to the sensor node over UART */
-var buffer = '';								/* buffer input from serial port */
 
 /**
- * Try to connect
+ * Open the serial port.
+ * (event handlers for the serial port)
+ */
+uart.open(function() {
+	console.log('SERIAL: Let the journalism begin, covering the RIOT - live');
+	uart.on('data', parseLine);
+});
+
+/**
+ * Try to connect to the anchor
  */
 connect();
-
 
 /**
  * Reporting section
@@ -72,54 +80,56 @@ socket.on('error', function() {
 	setTimeout(connect, 1000);
 });
 
+socket.on('message', function(data) {
+	uart.write(data.data + "\n");
+});
+
+/**
+ * @brief 	Send a json object to the anchor if the reporter is connected
+ *
+ * @param data 	The JSON object to send
+ */
 function report(data) {
 	if (isConnected) {
-		console.log('send ' + data);
 		socket.sendMessage(data);
 	}
 }
-
-/**
- * Research section
- * (event handlers for the serial port)
- */
-serialPort.open(function() {
-	console.log('SERIAL: Let the journalism begin, covering the RIOT - live');
-	serialPort.on('data', onData);
-});
 
 /**
  * This function is called once data received on the serial port
  * 
  * @note This function needs to be adapted for the riot output
  * 
- * @param data		The data bytes that were received
+ * @param line		The string that was received (without trailing \n)
  */
-function onData(data) {
-	for (var i = 0; i < data.length; i++) {
-		if (data[i] == 10 && buffer.length > 0) {
-			parseLine(buffer, report);
-		} else {
-			buffer += String.fromCharCode(data[i]);
-		}
-	}
-}
+function parseLine(line) {
+	// get the current time
+	var time = new Date().getTime();
+	// forward the entire line
+	var rawmsg = {
+		"type": "raw",
+		"data": line,
+		"time": time
+	};
+	report(rawmsg);
 
-function parseLine(line, cb) {
+	// parse line and forward event object
 	var res = undefined;
 	var data = line.match(/(m:|p_s:|p_d:).*/g);
 	if (data != null) {
 		var part = data[0].split(" ");
 		switch (part[0]) {
 			case "m:":
-				res = {
-					"hopsrc": part[8],
-					"hopdst": part[2],
-					"group": "rpl",
-					"type": part[5],
-					"payload": part[9],
-					"time": new Date().getTime()
-				};
+				if (part.length >= 10) {
+					res = {
+						"hopsrc": part[8],
+						"hopdst": part[2],
+						"group": "rpl",
+						"type": part[5],
+						"payload": part[9],
+						"time": time
+					};
+				}
 			break;
 			case "p_s:":
 				res = {
@@ -127,7 +137,7 @@ function parseLine(line, cb) {
 					"hopdst": part[2],
 					"group": "rpl",
 					"type": "parent_select",
-					"time": new Date().getTime()
+					"time": time
 				};
 			break;
 			case "p_d:":
@@ -136,13 +146,13 @@ function parseLine(line, cb) {
 					"hopdst": part[2],
 					"group": "rpl",
 					"type": "parent_delete",
-					"time": new Date().getTime()
+					"time": time
 				};
 			break;
 		}
 	}
 	if (res != undefined) {
-		cb(res);
+		report(res);
 	}
 }
 
