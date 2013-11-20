@@ -18,7 +18,8 @@ const APP_PORT = 3000;
 const BACKEND_PORT = 23511;
 const APP_DIR = __dirname + '/app';
 const ROOT_DIR = __dirname + '/root';
-const GRAPH_LAYOUT = __dirname + '/data/layout.json';
+const LAYOUT_DIR = __dirname + '/data';
+const DEFAULT_LAYOUT = LAYOUT_DIR + '/layout.json';
 
 /**
  * include packages
@@ -38,13 +39,26 @@ var graphData;										// the initial graph as read from the graph.json file
 /**
  * Read graph.json file from filesystem
  */
-fs.readFile(GRAPH_LAYOUT, 'utf8', function (err, data) {
-  if (err) {
-    console.log('Error: ' + err);
-    return;
-  } 
-  graphData = JSON.parse(data);
-});
+function parseLayout(url) {
+	var layout = url.match(/[a-zA-Z0-9]+$/g);
+	var layoutfile = LAYOUT_DIR + "/" + layout + ".json";
+	// try to read layout file
+	fs.readFile(layoutfile, 'utf8', function (err, data) {
+		if (err) {
+			console.log('INFO: Unable to locate layout: ' + layoutfile);
+			console.log('INFO: Fallback to default layout: ' + DEFAULT_LAYOUT);
+			fs.readFile(DEFAULT_LAYOUT, 'utf8', function(err, data) {
+				if (err) {
+					console.log('While opening default layout: ' + err);
+					return;
+				}
+				graphData = JSON.parse(data);
+			});
+			return;
+		} 
+		graphData = JSON.parse(data);
+	});
+}
 
 /**
  * Setup static routes for img, js, css and the favicon
@@ -60,8 +74,8 @@ app.use(express.favicon(ROOT_DIR + '/img/favicon.ico'));
  * Setup one generic route that always points to the index.html
  */
 app.get('/*', function(req, res) {
+	parseLayout(req.url);
 	res.sendfile(__dirname + '/views/index.html');
-//	res.sendfile(__dirname + '/test.html');
 });
 
 /**
@@ -77,6 +91,7 @@ server.listen(APP_PORT, function() {
  * When a new client is connecting, a initial node list is send to it. Later it receives 
  * all update information.
  */
+io.set('log level', 1);
 io.sockets.on('connection', function(socket) {
 	clients.push(socket);
 	socket.emit('init', graphData);	
