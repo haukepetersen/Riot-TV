@@ -41,6 +41,8 @@ var colors = {
 	'color13': '#2EE600',		// 
 	'color14': '#2EE600',		// 
 	'color15': '#009DFF',		// thin bright blue line (-> selected parent)
+	'color20': '#536236',		// light green -> camera traffic
+	'color30': '#54E600',		// event traffic
 };
 
 /**
@@ -202,25 +204,35 @@ function onInit(data) {
 };
 
 function onUpdate(data) {
-	if (data.hopsrc != data.hopdst) {
-		var id = data.hopsrc +'_' + data.hopdst;
-	
-		// graph.glow(data.hopdst);
-		// graph.vibrate(data.hopsrc);
-		
-		if (data.group == "rpl") {
-			switch (data.type) {
-				case 'parent_select':
-					event_ps(data);
-				break;
-				case 'parent_delete':
-					event_pd(data);
-				break;
-				default:
-					event_m(data);
-				break;
-			}
+	var id = data.hopsrc +'_' + data.hopdst;
+
+	// graph.glow(data.hopdst);
+	// graph.vibrate(data.hopsrc);
+	switch (data.group) {
+		case 'rpl':
+		switch (data.type) {
+			case 'parent_select':
+				event_ps(data);
+			break;
+			case 'parent_delete':
+				event_pd(data);
+			break;
+			default:
+				event_m(data);
+			break;
 		}
+		break;
+		case 'cam':
+			data.payload = "#color20";
+			event_m(data);
+		break;
+		case 'evt':
+			data.payload = "#color30";
+			event_m(data);
+		break;
+	}
+	
+	if (data.group == "rpl") {
 	}
 };
 
@@ -259,6 +271,12 @@ function event_m(evt) {
 		break;
 		case "#color15":
 			graph.fadeLink(evt.hopsrc, evt.hopdst, id, colors.color15, fading.normal, 30, 0);
+		break;
+		case "#color20":
+			graph.fadeLink(evt.hopsrc, evt.hopdst, id, colors.color20, fading.normal, 30, 0);
+		break;
+		case "#color30":
+			graph.fadeLink(evt.hopsrc, evt.hopdst, id, colors.color30, fading.normal, 30, 0);
 		break;
 	}
 };
