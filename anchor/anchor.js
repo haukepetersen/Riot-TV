@@ -35,7 +35,23 @@ var fs = require('fs');
  */
 var clients = [];									// list of clients connected to the anchor
 var graphData;										// the initial graph as read from the graph.json file
-var reporters = [];
+var reporters = {};
+
+/**
+ * Node address translation, translates reporter ids to node ids
+ */
+var nat = {
+	'nids': {},
+ 	'insert': function(tvid, nid) {
+ 		this.nids[nid] = tvid;
+ 	},
+ 	'remove': function(nid) {
+ 		delete this.nids[nid];
+ 	},
+ 	'translate': function(nid) {
+ 		return this.nids[nid];
+ 	}
+}
 
 /**
  * Read graph.json file from filesystem
@@ -96,13 +112,22 @@ io.set('log level', 1);
 io.sockets.on('connection', function(socket) {
 	clients.push(socket);
 	socket.on('console', function(data) {
-		console.log('TODO NEW CONSOLE DATA');
-		//socket.emit('console', {'time': new Date().getTime(), 'node': 'sn9', 'data': data.data + " with love from anchor"});
-		reporters.forEach(function(reporter) {
-			reporter.socket.sendMessage(data);
+		data.dst.forEach (function(id) {
+			if (reporters[id]) {
+				reporters[id].sendMessage({'data': data.data});
+			}
 		});
+
+		//socket.emit('console', {'time': new Date().getTime(), 'node': 'sn9', 'data': data.data + " with love from anchor"});
+		
+		// reporters.forEach(function(reporter) {
+		// 	reporter.socket.sendMessage(data);
+		// });
 	});
-	socket.emit('init', graphData);	
+	socket.emit('init', graphData);
+	for (rep in reporters) {
+		publish('online', {'id': rep, 'info': {}});
+	}
 });
 
 function clientUpdate(data) {
@@ -117,29 +142,35 @@ function clientSendRaw(data) {
 	});
 }
 
+function publish(type, data) {
+	clients.forEach(function(socket) {
+		socket.emit(type, data);
+	});	
+}
+
 /**
  * Start the backend
  */
 var net = require('net');
 var JsonSocket = require('json-socket');
 
-var serverSocket = net.createServer(function(sock) {
-	sock = new JsonSocket(sock);
-	reporters.push({'id': 'TODO', 'socket': sock});
-	console.log('connection from reporter');
-	// sock.on('data', function(data) {
-	// 	console.log('Got data');
-	// 	console.log(data);
-	// 	var foo = "";
-	// 	for (var i = 0; i < data.length; i++) {
-	// 		foo += String.fromCharCode(data[i]);
-	// 	}
-	// 	console.log(foo);
-	// });
+var serverSocket = net.createServer(function(basicSocket) {
+	console.log('SOCKET: Reporter connected from: ' + basicSocket.remoteAddress + ':' + basicSocket.remotePort);
+	sock = new JsonSocket(basicSocket);
+	// create reporter id
+	var id;
+	if (basicSocket.remoteAddress == '127.0.0.1') {
+		id = basicSocket.remoteAddress + ":" + basicSocket.remotePort;
+	} else {
+		id = basicSocket.remoteAddress;
+	}
+	reporters[id] = sock;
+	// publish reporter to frontend
+	publish('online', {'id': id, 'info': {}});		// TODO: send more information as node id etc from condig file
+
 	sock.on('message', function(data) {
 		if (data.type == 'raw') {
-			console.log("TODO NEW UART DATA");
-			data.node = 'sn2';
+			data.node = id;
 			clientSendRaw(data);
 		} else {
 			clientUpdate(data);
@@ -148,12 +179,14 @@ var serverSocket = net.createServer(function(sock) {
 	sock.on('error', function(error) {
 		console.log(error);
 	});
-	sock.on('close', function() {
-		console.log("TODO: REPORTER DISCONNECTED");
+	sock.on('close', function(test) {
+		publish('offline', {'id': id});
+		delete reporters[id];
+		console.log('SOCKET: Reporter disconnected: ' + id);
 	});
 });
 
-var init = function(port) {
+function init(port) {
 	serverSocket.listen(port, function() {
 		console.log('SOCKET: Backend socket started at port ' + port);
 	});
@@ -170,3 +203,4 @@ init(BACKEND_PORT);
  	clientUpdate(data);
  }, 2500);
  */
+

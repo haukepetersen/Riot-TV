@@ -18,6 +18,8 @@ const GRAPH_PANE = '#tvscreen';
 var graph = undefined;
 var socket = undefined;
 var isConnected = false;
+var activeNodes = {};
+var consoleNodes = {};
 
 /**
  * Pre-Defined coloring for the visulization
@@ -55,8 +57,6 @@ var fading = {					// fading speed in ms
  * Bootstrap the whole javascript klim-bim only after the page was fully loaded
  */
 $(document).ready(function() {
-	console.log('hello jquery');
-
 	initUi();
 	initGraph();
 	initSocket();	
@@ -79,6 +79,7 @@ function initUi() {
 		}
 	});
 	$("#console-showhide").click(consoleToggle);
+	$(".console-nodeselector").click(consoleNodeSelect);
 	$(".ui-slider").slider();
 	$("#radio").buttonset().click(function() {
 		graph.glow('node_5');
@@ -86,7 +87,7 @@ function initUi() {
 };
 
 function consoleSend() {
-	socket.emit('console', {'dst': ['12', '23'], 'data': $("#console-input").val()});
+	socket.emit('console', {'dst': Object.keys(activeNodes), 'data': $("#console-input").val()});
 	$("#console-input").val('');
 };
 
@@ -96,9 +97,50 @@ function consoleToggle() {
 		$("#console").slideDown();
 	} else {
 		$("#console").slideUp();
+		$("#console-input").focus();
 	}
 	button.toggleClass("show");
 	button.toggleClass("hide");
+};
+
+function consoleAddNode(data) {
+	// see if node already in list, if yes, replace
+	if (consoleNodes[data.id]) {
+		consoleRemoveNode(data);
+	}
+	// insert new nde
+	var nodelist = $("#console-sidebar");
+	var item = $('<div class="console-nodeselector passive">' + data.id + '<br /><span class="id">' + data.id + '</span>');
+	item.click(consoleNodeSelect);
+	nodelist.append(item);
+	consoleNodes[data.id] = {'id': data.id, 'info': data.info, 'element': item};
+}
+
+function consoleRemoveNode(data) {
+	var node = consoleNodes[data.id];
+	if (node) {
+		node.element.remove();
+		delete activeNodes[node.id];
+		delete node;
+	}
+}
+
+function consoleNodeSelect() {
+	var id = $(this).find(".id").first().text();
+	if ($(this).hasClass('active')) {
+		delete activeNodes[id];
+	} else {
+		activeNodes[id] = 'active';
+	}
+	$(this).toggleClass('active');
+	$(this).toggleClass('passive');
+};
+
+function consoleReceive(data) {
+	var out = $("#console-output");
+	var string = new Date(data.time).toLocaleString() + " [" + data.node + "] " + data.data + "\n";
+	out.val(out.val() + string);
+	out.scrollTop(out[0].scrollHeight - out.height());
 };
 
 /**
@@ -107,7 +149,6 @@ function consoleToggle() {
 function initSocket() {
 	socket = io.connect();
 	socket.on('connect', function() {
-		console.log('Connected to socket.io server');
 		socket.emit('status', '{online: true}');
 		isConnected = true;
 	});
@@ -119,7 +160,9 @@ function initSocket() {
 	});
 	socket.on('update', onUpdate);
 	socket.on('init', onInit);
-	socket.on('console', onConsole);
+	socket.on('console', consoleReceive);
+	socket.on('online', consoleAddNode);
+	socket.on('offline', consoleRemoveNode);
 };
 
 /**
@@ -147,15 +190,15 @@ function initGraph() {
 
 
 function onInit(data) {
-	console.log('onInit');
-	console.log(data);
-	data.nodes.forEach(function(n) {
-		graph.addNode(n.id, n.params);
-	});
-	data.edges.forEach(function(e) {
-		graph.addEdge(e.id, e.src, e.dst, e.params);
-	});
-	graph.draw(2, 2, 2);
+	if (data) {
+		data.nodes.forEach(function(n) {
+			graph.addNode(n.id, n.params);
+		});
+		data.edges.forEach(function(e) {
+			graph.addEdge(e.id, e.src, e.dst, e.params);
+		});
+		graph.draw(2, 2, 2);
+	}
 };
 
 function onUpdate(data) {
@@ -180,13 +223,6 @@ function onUpdate(data) {
 		}
 	}
 };
-
-function onConsole(data) {
-	var out = $("#console-output");
-	var string = new Date(data.time).toLocaleString() + " [" + data.node + "] " + data.data + "\n";
-	out.val(out.val() + string);
-	out.scrollTop(out[0].scrollHeight - out.height());
-}
 
 function event_m(evt) {
 	var id = evt.hopsrc + "_" + evt.hopdst + "-" + evt.payload;

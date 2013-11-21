@@ -81,6 +81,7 @@ socket.on('error', function() {
 });
 
 socket.on('message', function(data) {
+	console.log('COMMAND: ' + data.data);
 	uart.write(data.data + "\n");
 });
 
@@ -103,6 +104,7 @@ function report(data) {
  * @param line		The string that was received (without trailing \n)
  */
 function parseLine(line) {
+	console.log('NODE says: ' + line);
 	// get the current time
 	var time = new Date().getTime();
 	// forward the entire line
