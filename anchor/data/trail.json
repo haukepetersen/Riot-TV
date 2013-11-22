@@ -1,0 +1,93 @@
+{
+	"nodes": [
+	     {
+	    "id": "dummy_tl",
+	    "params": {
+	    	"color": 	"#000",
+	    	"size": 	1,
+	    	"x": 		0,
+	    	"y": 		0
+	    	}
+	    },
+	    {
+	    "id": "dummy_br",
+	    "params": {
+	    	"color": 	"#000",
+	    	"size": 	1,
+	    	"x": 		175,
+	    	"y": 		80
+	    	}
+	    },
+	    {
+	    "id": "146",
+	    "params": {
+	    	"label": 	"Sensor Node 146 (Root)",
+	    	"color": 	"#bd202c",
+	    	"size": 	10,
+	    	"x": 		125,
+	    	"y": 		30
+	    	}
+	    },
+	    {
+	    "id": "147",
+	    "params": {
+	    	"label": 	"Sensor Node 147",
+	    	"color": 	"#bd202c",
+	    	"size": 	10,
+	    	"x": 		125,
+	    	"y": 		50
+	    	}
+	    },
+		{
+	    "id": "148",
+	    "params": {
+	    	"label": 	"Sensor Node 148",
+	    	"color": 	"#bd202c",
+	    	"size": 	10,
+	    	"x": 		100,
+	    	"y": 		65
+	    	}
+	    },
+	    {
+	    "id": "149",
+	    "params": {
+	    	"label": 	"Sensor Node 149 (Atk)",
+	    	"color": 	"#bd202c",
+	    	"size": 	10,
+	    	"x": 		125,
+	    	"y": 		75
+	    	}
+	    },
+	    {
+	    "id": "150",
+	    "params": {
+	    	"label": 	"Sensor Node 150",
+	    	"color": 	"#bd202c",
+	    	"size": 	10,
+	    	"x": 		150,
+	    	"y": 		65
+	    	}
+	    }
+	    
+	],
+	"edges": [
+	    {
+	    "id": "cam0_gw",
+	    "src": "cam0",
+	    "dst": "gw",
+	    "params": {}
+	    },
+	    {
+	    "id": "cam1_gw",
+	    "src": "cam1",
+	    "dst": "gw",
+	    "params": {}
+	    },
+	    {
+	    "id": "gw_redis",
+	    "src": "gw",
+	    "dst": "redis",
+	    "params": {}
+	    }
+	]
+}

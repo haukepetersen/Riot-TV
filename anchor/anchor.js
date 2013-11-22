@@ -14,7 +14,7 @@
 /**
  * Setup the base configuration
  */
-const APP_PORT = 12345;
+const APP_PORT = 3000;
 const BACKEND_PORT = 23511;
 const APP_DIR = __dirname + '/app';
 const ROOT_DIR = __dirname + '/root';
