@@ -36,13 +36,7 @@ var port = DEFAULT_ANCHOR_PORT;
 var dev = DEFAULT_SERIAL_PORT;
 var socket = new JsonSocket(new net.Socket());	/* connection to the anchor */
 var isConnected = false;						/* flag signals if the reporter is connected to the anchor */
-var uart = new SerialPort(dev, {
-	'baudrate': 115200, 
-	'databits': 8, 
-	'parity': 'none', 
-	'stopbits': 1, 
-	'parser': serialPort.parsers.readline("\n")},
-	false);										/* connection to the sensor node over UART */
+var uart;
 
 /**
  * Parse serial port, host and port from command line arguments
@@ -64,21 +58,6 @@ function parseCommandLineArgs() {
 		}
 	});
 }
-
-/**
- * Open the serial port.
- * (event handlers for the serial port)
- */
-uart.open(function() {
-	console.log('SERIAL: Let the journalism begin, covering the RIOT - live');
-	uart.on('data', function(data){
-		var time = new Date().getTime();
-		console.log('UART:    ' + data);
-		if (isConnected) {
-			socket.sendMessage({'type': 'raw', 'data': data, 'time': time});
-		}
-	});
-});
 
 /**
  * Reporting section
@@ -123,3 +102,25 @@ console.log("Usage: $node reporter.js [DEV] [HOST] [PORT]");
 parseCommandLineArgs();
 console.log("INFO:   Connecting to device " + dev + " and anchor at " + host + ":" + port);
 connect();
+uart = new SerialPort(dev, {
+	'baudrate': 115200, 
+	'databits': 8, 
+	'parity': 'none', 
+	'stopbits': 1, 
+	'parser': serialPort.parsers.readline("\n")},
+	false);										/* connection to the sensor node over UART */
+
+/**
+ * Open the serial port.
+ * (event handlers for the serial port)
+ */
+uart.open(function() {
+	console.log('SERIAL: Let the journalism begin, covering the RIOT - live');
+	uart.on('data', function(data){
+		var time = new Date().getTime();
+		console.log('UART:    ' + data);
+		if (isConnected) {
+			socket.sendMessage({'type': 'raw', 'data': data, 'time': time});
+		}
+	});
+});
