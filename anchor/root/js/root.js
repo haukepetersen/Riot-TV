@@ -181,8 +181,8 @@ function initGraph() {
 		defaultEdgeType : 'line',			// curve or line
       	defaultEdgeArrow: 'target'
 	}).graphProperties({
-//		minNodeSize : 0.5,
-		maxNodeSize : 20,
+		minNodeSize : 10,
+		maxNodeSize : 15,
 //		minEdgeSize : 1,
 //		maxEdgeSize : 1
 	}).mouseProperties({
@@ -204,31 +204,36 @@ function onInit(data) {
 	}
 
 
-	// var src = "sn0";
-	// var dst = "sn7";
-	// var id = "sn0-sn9";
-	// graph.fadeLink(src, dst, id, colors.color2, fading.normal, 20, 5);
-	// //graph.showLink(src, dst, id, colors.color15, fading.fast, 5);
-	// setTimeout(function() {
-	// 	graph.hideLink(id, fading.superfast);
-	// }, 5000);
+	var src = "sn0";
+	var dst = "sn7";
+	var id = "sn0-sn9";
+	graph.fadeLink(src, dst, id, colors.color2, fading.normal, 20, 5);
+	//graph.showLink(src, dst, id, colors.color15, fading.fast, 5);
+	setTimeout(function() {
+		graph.hideLink(id, fading.superfast);
+	}, 5000);
 
-	// // debug
-	// var evt1 = {'hopsrc': 'sn5', 'hopdst': 'sn9', 'type': 'foo', 'payload': '#color30'};
-	// var evt2 = {'hopsrc': 'sn2', 'hopdst': 'sn7', 'type': 'foo', 'payload': '#color20'};
-	// event_m(evt1);
-	// //event_m(evt2);
-	// event_ps(evt2);
-	// setTimeout(function() {
-	// 	event_pd(evt2);
-	// }, 3000);
+	// debug
+	var evt1 = {'hopsrc': 'sn5', 'hopdst': 'sn9', 'type': 'foo', 'payload': '#color30'};
+	var evt2 = {'hopsrc': 'sn2', 'hopdst': 'sn7', 'type': 'foo', 'payload': '#color20'};
+	event_m(evt1);
+	//event_m(evt2);
+	event_ps(evt2);
+	setTimeout(function() {
+		event_pd(evt2);
+	}, 3000);
+
+	graph.setLabel("sn3", "Fröhliche Weihnachten");
+	graph.setRank("sn1", 14);
 };
 
 function onUpdate(data) {
-	var id = data.hopsrc +'_' + data.hopdst;
-
-	// graph.glow(data.hopdst);
-	// graph.vibrate(data.hopsrc);
+	// hack to emulate the gw on 'sn16':
+	if (data.hopsrc == 'sn16') {
+		data.hopsrc = 'gw';
+	} else if (data.hopdst == 'sn16') {
+		data.hopdst = 'gw';
+	}
 	switch (data.group) {
 		case 'rpl':
 		switch (data.type) {
@@ -303,11 +308,11 @@ function event_m(evt) {
 };
 
 function event_ps(evt) {
-	var id = evt.hopsrc + "_" + evt.hopdst + "-parent";
-	graph.showLink(evt.hopsrc, evt.hopdst, id, colors.color15, fading.fast, 5);
+	var id = evt.hopdst + "_" + evt.hopsrc + "-parent";
+	graph.showLink(evt.hopdst, evt.hopsrc, id, colors.color15, fading.fast, 5);
 };
 
 function event_pd(evt) {
-	var id = evt.hopsrc + "_" + evt.hopdst + "-parent";
+	var id = evt.hopdst + "_" + evt.hopsrc + "-parent";
 	graph.hideLink(id, fading.fast);
 }

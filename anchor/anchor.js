@@ -155,12 +155,7 @@ var serverSocket = net.createServer(function(basicSocket) {
 	console.log('SOCKET: Reporter connected from: ' + basicSocket.remoteAddress + ':' + basicSocket.remotePort);
 	sock = new JsonSocket(basicSocket);
 	// create reporter id
-	var id;
-	if (basicSocket.remoteAddress == '127.0.0.1') {
-		id = basicSocket.remoteAddress + ":" + basicSocket.remotePort;
-	} else {
-		id = basicSocket.remoteAddress;
-	}
+	var id = basicSocket.remoteAddress + ":" + basicSocket.remotePort;
 	reporters[id] = sock;
 	// publish reporter to frontend
 	publish('online', {'id': id, 'info': {}});		// TODO: send more information as node id etc from condig file
@@ -288,7 +283,7 @@ function reportToRedis(event, nodeid) {
 function scanRawData(data) {
 	// parse line and forward event object
 	var res = undefined;
-	var find = data.data.match(/(m:|p_s:|p_d:|d:).*/g);
+	var find = data.data.match(/(m:|p_s:|p_d:|d:|r:|i:).*/g);
 	if (find != null) {
 		console.log("VIS: Interesting String found: " + find[0]);
 		var part = find[0].split(" ");
@@ -303,6 +298,7 @@ function scanRawData(data) {
 						"payload": part[9],
 						"time": data.time
 					};
+					publish('update', res);
 				}
 			break;
 			case "p_s:": 		// when a RPL parent is selected
@@ -314,6 +310,7 @@ function scanRawData(data) {
 						"type": "parent_select",
 						"time": data.time
 					};
+					publish('update', res);
 				}
 			break;
 			case "p_d:": 		// when a RPL paren is droped
@@ -325,6 +322,7 @@ function scanRawData(data) {
 						"type": "parent_delete",
 						"time": data.time
 					};
+					publish('update', res);
 				}
 			break;
 			case "d:": 			// when a UDP packet (event) is received
@@ -332,12 +330,19 @@ function scanRawData(data) {
 					reportToRedis(part[5], part[2]);
 				}
 			break;
+			case "r:":
+				if (part.length >= 5) {
+					publish('rank', {'id': part[1], 'rank': part[5]});
+				}
+			break;
+			case "i:":
+				if (part.length >= 5) {
+					publsh('ignore', {'id': part[1], 'ignores': part[5]});
+				}
+			break;
 		}
 	}
-	if (res != undefined) {
-		publish('update', res);
-	}
-}
+};
 
 /**
  * Debugging the parser

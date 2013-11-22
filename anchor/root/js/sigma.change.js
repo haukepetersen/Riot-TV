@@ -345,6 +345,20 @@
 		}
 	};
 
+	sigma.publicPrototype.setLabel = function(nodeId, label) {
+		var node = this.change.getNode(nodeId);
+		if (node) {
+			node.label = label;
+		}
+	};
+
+	sigma.publicPrototype.setRank = function(nodeId, rank) {
+		var node = this.change.getNode(nodeId);
+		if (node) {
+			node.label =  "(" + rank + ") " + node.label;
+		}
+	}
+
 	sigma.publicPrototype.isEdge = function(id) {
 		return this.change.getEdge(id) != undefined;
 	};
