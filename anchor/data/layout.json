@@ -49,16 +49,6 @@
 	    	}
 	    },
 	    {
-	    "id": "cam1",
-	    "params": {
-	    	"label": 	"Camera Node 1",
-	    	"color": 	"#3399aa",
-	    	"size": 	10,
-	    	"x": 		20,
-	    	"y": 		66
-	    	}
-	    },
-	    {
 	    "id": "sn0",
 	    "params": {
 	    	"label": 	"Sensor Node 0",
@@ -165,19 +155,13 @@
 	    "id": "cam0_gw",
 	    "src": "cam0",
 	    "dst": "gw",
-	    "params": {}
-	    },
-	    {
-	    "id": "cam1_gw",
-	    "src": "cam1",
-	    "dst": "gw",
-	    "params": {}
+	    "params": {"size": 3}
 	    },
 	    {
 	    "id": "gw_redis",
 	    "src": "gw",
 	    "dst": "redis",
-	    "params": {}
+	    "params": {"size": 3}
 	    }
 	]
 }

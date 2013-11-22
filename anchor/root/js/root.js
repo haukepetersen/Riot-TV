@@ -61,7 +61,7 @@ var fading = {					// fading speed in ms
 $(document).ready(function() {
 	initUi();
 	initGraph();
-	initSocket();	
+	initSocket();
 });
 
 /**
@@ -178,7 +178,8 @@ function initGraph() {
 		defaultLabelBGColor : '#fff',
 		defaultLabelHoverColor : '#000',
 		labelThreshold : 6,
-		defaultEdgeType : 'line'			// curve or line
+		defaultEdgeType : 'line',			// curve or line
+      	defaultEdgeArrow: 'target'
 	}).graphProperties({
 //		minNodeSize : 0.5,
 		maxNodeSize : 20,
@@ -201,6 +202,26 @@ function onInit(data) {
 		});
 		graph.draw(2, 2, 2);
 	}
+
+
+	// var src = "sn0";
+	// var dst = "sn7";
+	// var id = "sn0-sn9";
+	// graph.fadeLink(src, dst, id, colors.color2, fading.normal, 20, 5);
+	// //graph.showLink(src, dst, id, colors.color15, fading.fast, 5);
+	// setTimeout(function() {
+	// 	graph.hideLink(id, fading.superfast);
+	// }, 5000);
+
+	// // debug
+	// var evt1 = {'hopsrc': 'sn5', 'hopdst': 'sn9', 'type': 'foo', 'payload': '#color30'};
+	// var evt2 = {'hopsrc': 'sn2', 'hopdst': 'sn7', 'type': 'foo', 'payload': '#color20'};
+	// event_m(evt1);
+	// //event_m(evt2);
+	// event_ps(evt2);
+	// setTimeout(function() {
+	// 	event_pd(evt2);
+	// }, 3000);
 };
 
 function onUpdate(data) {
@@ -282,11 +303,11 @@ function event_m(evt) {
 };
 
 function event_ps(evt) {
-	var id = evt.hopsrc + "_" + evt.hopdst + "-" + evt.type;
+	var id = evt.hopsrc + "_" + evt.hopdst + "-parent";
 	graph.showLink(evt.hopsrc, evt.hopdst, id, colors.color15, fading.fast, 5);
 };
 
 function event_pd(evt) {
-	var id = evt.hopsrc + "_" + evt.hopdst + "-" + evt.type;
-	graph.hideLink(id, fading.superfast);
+	var id = evt.hopsrc + "_" + evt.hopdst + "-parent";
+	graph.hideLink(id, fading.fast);
 }

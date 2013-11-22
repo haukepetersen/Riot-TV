@@ -75,8 +75,8 @@ function parseLayout(url) {
 		// try to read layout file
 		fs.readFile(layoutfile, 'utf8', function (err, data) {
 			if (err) {
-				console.log('INFO:   Unable to locate layout: ' + layoutfile);
-				console.log('INFO:   Fallback to default layout: ' + DEFAULT_LAYOUT);
+				// console.log('INFO:   Unable to locate layout: ' + layoutfile);
+				// console.log('INFO:   Fallback to default layout: ' + DEFAULT_LAYOUT);
 				loadDefaultLayout();
 				return;
 			} 
@@ -278,6 +278,10 @@ function reportToRedis(event, nodeid) {
  * - p_s: ID X selected ID Y as parent
  * - p_d: ID X deleted ID Y as parent
  * - d: ID X received event EID #color
+
+ * TODO
+ * - r: ID X selected rank N 	- rank in paranthesis behind node name in graph
+ * - i: ID X ignores ID Y		- roter blitz (dünner roter blitz?) -> keine Ausgabe
  * 
  * @param line		The string that was received (without trailing \n)
  */
