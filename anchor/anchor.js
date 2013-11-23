@@ -69,6 +69,9 @@ var nat = {
  * Read graph.json file from filesystem
  */
 function parseLayout(url) {
+	if (url == "/js/jquery-2.0.3.min.map") {
+		return;
+	}
 	var layout = url.match(/[a-zA-Z0-9]+$/g);
 	if (layout != null) {
 		var layoutfile = LAYOUT_DIR + "/" + layout[0] + ".json";
