@@ -18,8 +18,13 @@ const GRAPH_PANE = '#tvscreen';
 var graph = undefined;
 var socket = undefined;
 var isConnected = false;
-var activeNodes = {};
-var consoleNodes = {};
+var stats = {};					// object saves status information about nodes, as parent, rank and message counter
+var ignoreList = {};			// a list containing ignored edges, events on those will not be displayed
+// keep track of reporters and stations
+var reporters = {};
+var activeReporters = {};
+var stations = {};
+var activeStation;
 
 /**
  * Pre-Defined coloring for the visulization
@@ -81,17 +86,25 @@ function initUi() {
 		}
 	});
 	$("#console-showhide").click(consoleToggle);
-	$(".console-nodeselector").click(consoleNodeSelect);
-	$(".ui-slider").slider();
-	$("#radio").buttonset().click(function() {
-		graph.glow('node_5');
-	});
+	$(".console-nodeselector").click(reporterSelect);
+	$("#console-sc-attack").button().click(consoleScAttack);
+	$("#console-sc-trail").button().click(consoleScTrail);
+	$(".console-station").click(stationSelect);
+	stationsInit();
 };
 
 function consoleSend() {
-	socket.emit('console', {'dst': Object.keys(activeNodes), 'data': $("#console-input").val()});
+	socket.emit('console', {'dst': Object.keys(activeReporters), 'data': $("#console-input").val()});
 	$("#console-input").val('');
 };
+
+function consoleScAttack() {
+	socket.emit('console', {'dst': Object.keys(activeReporters), 'data': 'attack'});
+}
+
+function consoleScTrail() {
+	socket.emit('console', {'dst': Object.keys(activeReporters), 'data': 'trail'});
+}
 
 function consoleToggle() {
 	var button = $("#console-showhide");
@@ -105,37 +118,106 @@ function consoleToggle() {
 	button.toggleClass("hide");
 };
 
-function consoleAddNode(data) {
-	// see if node already in list, if yes, replace
-	if (consoleNodes[data.id]) {
-		consoleRemoveNode(data);
-	}
-	// insert new nde
-	var nodelist = $("#console-sidebar");
-	var item = $('<div class="console-nodeselector passive">' + data.id + '<br /><span class="id">' + data.id + '</span>');
-	item.click(consoleNodeSelect);
-	nodelist.append(item);
-	consoleNodes[data.id] = {'id': data.id, 'info': data.info, 'element': item};
+/**
+ * Manage reporters and stations
+ */
+function stationsInit() {
+	stationAdd('all', 'All');
+	stations['all'].dom.addClass('active');
+	activeStation = stations.all;
+	stationUpdate();
 }
 
-function consoleRemoveNode(data) {
-	var node = consoleNodes[data.id];
-	if (node) {
-		node.element.remove();
-		delete activeNodes[node.id];
-		delete node;
+/**
+ * @brief	Add a new station to the console
+ */
+function stationAdd(id, name) {
+	var item = $('<div class="console-station">' + name + '</div>');
+	item.click(stationSelect);
+	$("#console-stations").append(item);
+	stations[id] = {'name': name, 'dom': item, 'reps': {}};
+};
+
+function stationUpdate() {
+	for (rid in reporters) {
+		reporters[rid].dom.hide();
 	}
+	for (rid in activeStation.reps) {
+		reporters[rid].dom.show();
+	}
+	// finally see if any active reporter is in an inactive group
+	for (rid in activeReporters) {
+		if (!activeStation.reps[rid]) {
+			reporters[rid].dom.toggleClass('active');
+			delete activeReporters[rid];
+		}
+	}
+};
+
+/**
+ * @param data: Object{id: , station: ,}
+ */
+function stationAssign(data) {
+	var id = data.station.toLowerCase();
+	if (!stations[id]) {
+		stationAdd(id, data.station);
+	}
+	for (sid in stations) {
+		if (sid != 'all') {
+			delete stations[sid].reps[data.id];
+		}
+	}
+	stations[id].reps[data.id] = reporters[data.id];
+	stationUpdate();
+};
+
+function stationSelect() {
+	var id = $(this).text().toLowerCase();
+	activeStation.dom.removeClass('active');
+	$(this).addClass('active');
+	activeStation = stations[id];
+	stationUpdate();
 }
 
-function consoleNodeSelect() {
+function reporterAdd(data) {
+	// see if reporter already in list, if yes, replace
+	if (reporters[data.id]) {
+		reporterRemove(data);
+	}
+	// insert new reporter into dom
+	var domParent = $("#console-reporters");
+	var item = $('<div class="console-nodeselector">' + data.id + '<br /><span class="id">' + data.id + '</span>');
+	item.click(reporterSelect);
+	domParent.append(item);
+	reporters[data.id] = {'id': data.id, 'name': data.name, 'dom': item};
+	// add node to stations
+	stations.all.reps[data.id] = reporters[data.id];
+	if (data.station) {
+		stationAssign(data.station, data.id);
+	}
+	stationUpdate();
+};
+
+function reporterRemove(data) {
+	var reporter = reporters[data.id];
+	if (reporter) {
+		reporter.dom.remove();
+		for (sid in stations) {
+			delete stations[sid].reps[data.id];
+		}
+		delete activeReporters[data.id];
+		delete reporters[data.id];
+	}
+};
+
+function reporterSelect() {
 	var id = $(this).find(".id").first().text();
 	if ($(this).hasClass('active')) {
-		delete activeNodes[id];
+		delete activeReporters[id];
 	} else {
-		activeNodes[id] = 'active';
+		activeReporters[id] = 'active';
 	}
 	$(this).toggleClass('active');
-	$(this).toggleClass('passive');
 };
 
 function consoleReceive(data) {
@@ -163,8 +245,11 @@ function initSocket() {
 	socket.on('update', onUpdate);
 	socket.on('init', onInit);
 	socket.on('console', consoleReceive);
-	socket.on('online', consoleAddNode);
-	socket.on('offline', consoleRemoveNode);
+	socket.on('stationSet', stationAssign);
+	socket.on('online', reporterAdd);
+	socket.on('offline', reporterRemove);
+	socket.on('rank', onRank);
+	socket.on('ignore', onIgnore);
 };
 
 /**
@@ -189,12 +274,58 @@ function initGraph() {
 //		maxRatio : 1,
 	});
 	graph.activateChange();
+	//graph.activateFishEye();
+
+	graph.bind('overnodes', showNodeInfo);
+	graph.bind('outnodes', hideNodeInfo);
 };
+var popUp;
+
+function attributesToString(attr) {
+      return '' +
+        attr.map(function(o){
+          return '' + o.attr + ' : ' + o.val + '';
+        }).join('') +
+        '';
+    }
+
+function showNodeInfo(evt) {
+	popUp && popUp.remove();
+
+	// make html tag
+	var node;
+      graph.iterNodes(function(n){
+        node = n;
+      },[evt.content[0]]);
+	var data = stats[node.id];
+	var html = '<div class="popup"><ul>';
+	html += '<li>Rank: ' + data.rank + '</li>';
+	html += '<li>Parent: ' + data.parent + '</li>';
+	html += '<li>Root: ' + data.root + '</li>';
+	html += '<li>Send: ' + data.send + '</li>';
+	html += '<li>Received: ' + data.rec + '</li>';
+	html += '</ul></div>';
+
+	popUp = $(html).attr('id', 'popup' + graph.getID()
+		).css({
+			'left': node.displayX - 5,
+			'top': node.displayY + 9,
+			'z-index': -0
+		});
+	$(GRAPH_PANE).append(popUp);
+};
+
+function hideNodeInfo(evt) {
+      popUp && popUp.remove();
+      popUp = false;
+};
+
 
 
 function onInit(data) {
 	if (data) {
 		data.nodes.forEach(function(n) {
+			stats[n.id] = {'rank': '-', 'parent': '-', 'root': '-', 'send': 0, 'rec': 0};
 			graph.addNode(n.id, n.params);
 		});
 		data.edges.forEach(function(e) {
@@ -206,7 +337,7 @@ function onInit(data) {
 
 	var src = "sn0";
 	var dst = "sn7";
-	var id = "sn0-sn9";
+	var id = "sn0_sn7";
 	graph.fadeLink(src, dst, id, colors.color2, fading.normal, 20, 5);
 	//graph.showLink(src, dst, id, colors.color15, fading.fast, 5);
 	setTimeout(function() {
@@ -214,8 +345,8 @@ function onInit(data) {
 	}, 5000);
 
 	// debug
-	var evt1 = {'hopsrc': 'sn5', 'hopdst': 'sn9', 'type': 'foo', 'payload': '#color30'};
-	var evt2 = {'hopsrc': 'sn2', 'hopdst': 'sn7', 'type': 'foo', 'payload': '#color20'};
+	var evt1 = {'hopsrc': 'sn5', 'hopdst': 'sn9', 'group': 'rpl', 'type': 'foo', 'payload': '#color30'};
+	var evt2 = {'hopsrc': 'sn2', 'hopdst': 'sn7', 'group': 'rpl', 'type': 'foo', 'payload': '#color20'};
 	event_m(evt1);
 	//event_m(evt2);
 	event_ps(evt2);
@@ -227,6 +358,31 @@ function onInit(data) {
 	graph.setRank("sn1", 14);
 };
 
+/**
+ * @brief 	Set the rank for the given node
+ * 
+ * @param Object {'id': ... , 'rank': ...}
+ */
+function onRank(data) {
+	graph.setRank(data.id, data.rank);
+	stats[data.id].rank = data.rank;
+};
+
+/**
+ * @brief	Add an ignore entry for a given edge
+ *
+ * @param Object {'id': ... , 'ignores': ...}
+ */
+function onIgnore(data) {
+	var id = data.ignores + "_" + data.id;
+	ignoreList[id] = true;
+};
+
+/**
+ * @brief	This method is called everytime an update to the displaying graph is required.
+ *
+ * @param data 		Object {'hopsrc': ..., 'hopdst': ..., group: , type: , and more}
+ */
 function onUpdate(data) {
 	// hack to emulate the gw on 'sn16':
 	if (data.hopsrc == 'sn16') {
@@ -263,6 +419,14 @@ function onUpdate(data) {
 };
 
 function event_m(evt) {
+	// check if the edge in question is on the ignore list
+	var ignoretest = evt.hopsrc + "_" + evt.hopdst;
+	if (ignoreList[ignoretest]) {
+		return;
+	}
+	stats[evt.hopsrc].send ++;
+	stats[evt.hopdst].rec ++;
+
 	var id = evt.hopsrc + "_" + evt.hopdst + "-" + evt.payload;
 	switch (evt.payload) {
 		case "#color0":
@@ -309,10 +473,12 @@ function event_m(evt) {
 
 function event_ps(evt) {
 	var id = evt.hopdst + "_" + evt.hopsrc + "-parent";
+	stats[evt.hopdst].parent = evt.hopsrc;
 	graph.showLink(evt.hopdst, evt.hopsrc, id, colors.color15, fading.fast, 5);
 };
 
 function event_pd(evt) {
 	var id = evt.hopdst + "_" + evt.hopsrc + "-parent";
+	stats[evt.hopdst].parent = '-';
 	graph.hideLink(id, fading.fast);
 }
