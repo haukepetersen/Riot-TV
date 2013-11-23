@@ -26,6 +26,9 @@ var activeReporters = {};
 var stations = {};
 var activeStation;
 
+// show a popup when hovering graph nodes
+var popUp;
+
 /**
  * Pre-Defined coloring for the visulization
  */
@@ -279,15 +282,6 @@ function initGraph() {
 	graph.bind('overnodes', showNodeInfo);
 	graph.bind('outnodes', hideNodeInfo);
 };
-var popUp;
-
-function attributesToString(attr) {
-      return '' +
-        attr.map(function(o){
-          return '' + o.attr + ' : ' + o.val + '';
-        }).join('') +
-        '';
-    }
 
 function showNodeInfo(evt) {
 	popUp && popUp.remove();
@@ -333,29 +327,6 @@ function onInit(data) {
 		});
 		graph.draw(2, 2, 2);
 	}
-
-
-	var src = "sn0";
-	var dst = "sn7";
-	var id = "sn0_sn7";
-	graph.fadeLink(src, dst, id, colors.color2, fading.normal, 20, 5);
-	//graph.showLink(src, dst, id, colors.color15, fading.fast, 5);
-	setTimeout(function() {
-		graph.hideLink(id, fading.superfast);
-	}, 5000);
-
-	// debug
-	var evt1 = {'hopsrc': 'sn5', 'hopdst': 'sn9', 'group': 'rpl', 'type': 'foo', 'payload': '#color30'};
-	var evt2 = {'hopsrc': 'sn2', 'hopdst': 'sn7', 'group': 'rpl', 'type': 'foo', 'payload': '#color20'};
-	event_m(evt1);
-	//event_m(evt2);
-	event_ps(evt2);
-	setTimeout(function() {
-		event_pd(evt2);
-	}, 3000);
-
-	graph.setLabel("sn3", "Fröhliche Weihnachten");
-	graph.setRank("sn1", 14);
 };
 
 /**

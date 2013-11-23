@@ -79,8 +79,12 @@ function parseLayout(url) {
 				console.log('INFO:   Fallback to default layout: ' + DEFAULT_LAYOUT);
 				loadDefaultLayout();
 				return;
-			} 
-			graphData = JSON.parse(data);
+			}
+			try {
+				graphData = JSON.parse(data);
+			} catch (e) {
+				console.error("ERROR: Unable to parse json: " + e);
+			}
 		});
 	} else {
 		loadDefaultLayout();

@@ -52,24 +52,5 @@
 	    }
 	    
 	],
-	"edges": [
-	    {
-	    "id": "cam0_gw",
-	    "src": "cam0",
-	    "dst": "gw",
-	    "params": {}
-	    },
-	    {
-	    "id": "cam1_gw",
-	    "src": "cam1",
-	    "dst": "gw",
-	    "params": {}
-	    },
-	    {
-	    "id": "gw_redis",
-	    "src": "gw",
-	    "dst": "redis",
-	    "params": {}
-	    }
-	]
+	"edges": []
 }
