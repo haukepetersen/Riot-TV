@@ -198,6 +198,10 @@ function reporterAdd(data) {
 	if (data.station) {
 		stationAssign(data);
 	}
+	if (activeStation.reps[data.id]) {
+		reporters[data.id].dom.setClass('active');
+		activeReporters[data.id] = 'active';
+	}
 	stationUpdate();
 };
 
