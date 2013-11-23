@@ -391,7 +391,8 @@ function onUpdate(data) {
 
 function event_m(evt) {
 	// check if the edge in question is on the ignore list
-	var ignoretest = evt.hopsrc + "_" + evt.hopdst;
+	//var ignoretest = evt.hopsrc + "_" + evt.hopdst;
+	var ignoretest = evt.hopdst + "_" + evt.hopsrc;
 	if (ignoreList[ignoretest]) {
 		return;
 	}
