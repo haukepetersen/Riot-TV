@@ -411,6 +411,8 @@ function event_m(evt) {
 	stats[evt.hopsrc].send ++;
 	stats[evt.hopdst].rec ++;
 
+	
+	console.log("event in event_m");
 	var id = evt.hopsrc + "_" + evt.hopdst + "-" + evt.payload;
 	switch (evt.payload) {
 		case "#color0":
@@ -425,6 +427,11 @@ function event_m(evt) {
 		case "#color3":
 			graph.fadeLink(evt.hopsrc, evt.hopdst, id, colors.color3, fading.normal, 30, 0);
 		break;
+		case "#color4":
+			graph.fadeLink(evt.hopsrc, evt.hopdst, id, colors.color4, fading.normal, 30, 0);
+		break;
+		case "#color5":
+			graph.fadeLink(evt.hopsrc, evt.hopdst, id, colors.color5, fading.normal, 30, 0);
 		case "#color6":
 			graph.fadeLink(evt.hopsrc, evt.hopdst, id, colors.color6, fading.normal, 30, 0);
 		break;
