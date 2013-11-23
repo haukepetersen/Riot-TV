@@ -16,26 +16,15 @@
   <body>
 
       <div id="layout-head">
-        <img src="img/logo-large.png" width="150" />
-        <!--
-        <div id="head-menu">
-	      <div id="radio">
-	        <input type="radio" id="radio1" name="radio" /><label for="radio1">Choice 1</label>
-	        <input type="radio" id="radio2" name="radio" checked="checked" /><label for="radio2">Choice 2</label>
-	        <input type="radio" id="radio3" name="radio" /><label for="radio3">Choice 3</label>
-	 	    </div>
-    	 	<div id="colorset">
-    	 	  <label for="colorset-node">Node</label>
-    	 	  <input type="text" id="colorset-node" name="node" value="node_4"/>
-    	 	  <label for="colorset-color">Color</label>
-    	 	  <input type="text" id="colorset-color" name="color" value="#fff" />
-    	 	  <button>Set</button>
-    	 	</div>
-	     	<button>Sidebar</button>
+        <div id="head-logos">
+          <img id="logo-safest" src="img/logo_safest.png" alt="Logo Safest" />
+          <div id="head-sponsors">
+            <div>Sponsored by:</div>
+            <a href="/trail"><img id="logo-bmbf" src="img/logo_bmbf.png" alt="Logo BMBF" /></a>
+            <a href="/"><img id="logo-anr" src="img/logo_anr.png" alt="Logo ANR" /></a>
+          </div>
         </div>
-        -->
-        
-        <h2>RIOT TV</h2>
+        <img id="logo-riot" src="img/logo_riot.png" /><span class="logo">-TV</span>
       </div>
 
 
@@ -73,10 +62,9 @@
             <textarea id="console-output"></textarea>
             <input id="console-input" type="text" />
             <button id="console-send">Send</button>
-            <div id="console-shortcuts">
-              <button id="console-sc-attack">Attack!</button>
-              <button id="console-sc-trail">TRAIL</button>
-            </div>
+            <button id="console-sc-attack">Attack!</button>
+            <button id="console-sc-trail">TRAIL</button>
+            <button id="console-sc-initgw">Setup Gateway</button>
           </div>
         </div>
       </div>

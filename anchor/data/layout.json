@@ -150,18 +150,5 @@
 		}
 	
 	],
-	"edges": [
-	    {
-	    "id": "cam0_gw",
-	    "src": "cam0",
-	    "dst": "gw",
-	    "params": {"size": 3}
-	    },
-	    {
-	    "id": "gw_redis",
-	    "src": "gw",
-	    "dst": "redis",
-	    "params": {"size": 3}
-	    }
-	]
+	"edges": []
 }

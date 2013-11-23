@@ -92,6 +92,7 @@ function initUi() {
 	$(".console-nodeselector").click(reporterSelect);
 	$("#console-sc-attack").button().click(consoleScAttack);
 	$("#console-sc-trail").button().click(consoleScTrail);
+	$("#console-sc-initgw").button().click(consoleScInitgw);
 	$(".console-station").click(stationSelect);
 	stationsInit();
 };
@@ -107,6 +108,12 @@ function consoleScAttack() {
 
 function consoleScTrail() {
 	socket.emit('console', {'dst': Object.keys(activeReporters), 'data': 'trail'});
+}
+
+function consoleScInitgw() {
+	socket.emit('console', {'dst': Object.keys(activeReporters), 'data': 'init r 16'});
+	socket.emit('console', {'dst': Object.keys(activeReporters), 'data': 'ign 55'});
+	socket.emit('console', {'dst': Object.keys(activeReporters), 'data': 'server'});
 }
 
 function consoleToggle() {

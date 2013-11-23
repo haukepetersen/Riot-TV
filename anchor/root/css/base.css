@@ -1,7 +1,9 @@
+@import url(http://fonts.googleapis.com/css?family=Chango);
+
 body {
 	margin: 0;
 	padding: 0;
-	background-color: #333333;
+	background-color: #222222;
 	color: #eee;
 	font-family: sans-serif;
 	font-size: 11px;
@@ -19,23 +21,69 @@ img {
 	top: 0;
 	left: 0;
 	right: 0;
-	height: 100px;	
+	height: 116px;
+	border-bottom: 4px solid #3fa788;
 }
 
-#layout-head img {
+#logo-riot {
+	height: 98px;
+	margin: 10px 0 0 50px;
 	float: left;
+}
+
+#layout-head span.logo {
+	display: block;
+	margin: 30px 0 0;
+	float:left;
+	color: #bd202c;
+	font-size: 70px;
+	font-family: 'Chango', cursive;
 }
 
 #head-menu {
 	float: right;
 }
 
+#head-logos {
+	height: 100px; width: 800px;
+	float:right;
+	border-bottom-left-radius: 50px;
+	background-color:#ffffff;
+	color: #333333;
+	font-weight: bold;
+	font-size: 10px;
+}
+
+#logo-safest {
+	height: 80px;
+	margin: 10px 0 0 60px;
+}
+
+#head-sponsors {
+	float:right;
+}
+
+#head-sponsors > div {
+	padding: 10px 30px 5px 0;
+	text-align: center;
+}
+
+#logo-bmbf {
+	height: 60px;
+	margin: 0 10px;
+}
+
+#logo-anr {
+	height: 60px;
+	margin: 0 10px;
+}
+
 /* Page Main Window ******************************************************************************/
 #layout-cont {
 	position: absolute;
-	top: 100px;
+	top: 120px;
 	left: 0;
-	bottom: 50px;
+	bottom: 100px;
 	right: 0;
 }
 #tvscreen {
@@ -72,26 +120,29 @@ img {
 	left: 0;
 	bottom: 0;
 	right: 0;
-	height: 50px;
+	height: 96px;
+	border-top: 4px solid #3fa788;
 }
 
 #logo-bar {
-	margin: 5px;
-	height: 40px;
+	width: 75%; height: 80px;
+	margin: 16px 0 0 0;
+	padding: 0 0 0 75px;
 	background-color: #ffffff;
+	border-top-right-radius: 50px;
 }
 
 #layout-foot img {
-	height: 34px;
-	padding: 3px 10px 0 0;
+	height: 50px;
+	padding: 15px 0 0 2%;
 }
 
 #console-showhide {
-	height: 42px; width: 40px;
-	margin: 4px;
+	height: 40px; width: 40px;
 	float: right;
-	background-color: #555555;
 	cursor: pointer;
+	background-repeat: no-repeat;
+	background-position: top right
 }
 #console-showhide.show {
 	background-image: url("../img/expand_arrow_40.png");
@@ -104,11 +155,11 @@ img {
 #console {
 	display: none;
 	position: absolute;
-	bottom: 50px;
-	right: 20px;
-	width: 1100px; height:500px;
+	bottom: 100px;
+	right: 0px;
+	width: 1200px; height:650px;
 	border-radius: 5px 5px 0 0;
-	opacity: 0.85;
+	opacity: 0.75;
 	background-color: #333333;
 }
 
@@ -129,41 +180,20 @@ img {
 	color: #eeeeee;
 	cursor: pointer;
 	text-align: center;
-	/*
-	-webkit-transform: rotate(-90deg); 
-	-moz-transform: rotate(-90deg);*/
-}
-.console-station:hover {
-	background-color: #2f2f2f;
 }
 .console-station.active {
-	background-color: #414141;
+	background-color: #353535;
 	color: #000000;
 }
-
-#console-reporters {
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-
-.console-nodeselector-left {
-	width: 90px; height: 25px;
-	float: left;
-	cursor: pointer;
-	background-color: #cccccc;
-}
-
-.console-nodeselector-right {
-	width: 90px; height: 25px;
-	float: right;
-	cursor: pointer;
-	background-color: #cccccc;
+.console-station:hover, .console-station.active:hover {
+	background-color: #090909;
+	color: #dedede;
 }
 
 .console-nodeselector {
-	width: 185px; height: 25px;
-	margin: 10px auto;
-	padding-top: 5px;
+	width: 180px; height: 15px;
+	margin: 5px auto;
+	padding-top: 3px;
 	clear: both;
 	border-radius: 3px;
 	background-color: #666666;
@@ -171,11 +201,10 @@ img {
 	font-weight: bold;
 	text-align: center;
 	cursor: pointer;
-	background-position: left center;
-	background-repeat: no-repeat; 
 }
 .console-nodeselector .id {
 	font-weight: normal;
+	display: none;
 }
 .console-nodeselector:hover {
 	background-color: #fff;
@@ -186,13 +215,13 @@ img {
 
 #console-mainbar {
 	float: right;
-	width: 900px;
+	width: 1000px;
 }
 
 #console-output {
 	border: 0;
-	width: 895px;
-	height: 400px;
+	width: 1000px;
+	height: 600px;
 	color: #eeeeee;
 	background-color: #111111;
 	font-size: 10px;
@@ -200,7 +229,7 @@ img {
 }
 
 #console-input {
-	width: 600px;
+	width: 650px;
 	border: 0;
 	padding: 5px 10px;
 	color: #eeeeee;
