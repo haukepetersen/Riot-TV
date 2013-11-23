@@ -49,105 +49,65 @@
 	    	}
 	    },
 	    {
-	    "id": "sn0",
+	    "id": "sn10",
 	    "params": {
-	    	"label": 	"Sensor Node 0",
+	    	"label": 	"Router 1",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
-	    	"x": 		75,
+	    	"x": 		100,
 	    	"y": 		25
 	    	}
 	    },
 	    {
-	    "id": "sn1",
+	    "id": "sn11",
 	    "params": {
-	    	"label": 	"Sensor Node 1",
+	    	"label": 	"Router 2",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
-	    	"x": 		75,
+	    	"x": 		85,
 	    	"y": 		50
 	    	}
 	    },
 		{
-	    "id": "sn2",
+	    "id": "sn12",
 	    "params": {
-	    	"label": 	"Sensor Node 2",
+	    	"label": 	"Router 3",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
-	    	"x": 		75,
+	    	"x": 		100,
 	    	"y": 		75
 	    	}
 	    },
 	    {
-	    "id": "sn3",
+	    "id": "sn13",
 	    "params": {
-	    	"label": 	"Sensor Node 3",
+	    	"label": 	"Router 4",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
-	    	"x": 		100,
+	    	"x": 		125,
 	    	"y": 		33
 	    	}
 	    },
 	    {
-	    "id": "sn4",
+	    "id": "sn14",
 	    "params": {
-	    	"label": 	"Sensor Node 4",
+	    	"label": 	"Router 5",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
-	    	"x": 		100,
+	    	"x": 		125,
 	    	"y": 		66
 	    	}
 	    },
 	    {
-	    "id": "sn5",
+	    "id": "sn55",
 	    "params": {
-	    	"label": 	"Sensor Node 5",
+	    	"label": 	"Fence Sensor",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
-	    	"x": 		125,
-	    	"y": 		25
-	    	}
-	    },
-	    {
-	    "id": "sn6",
-	    "params": {
-	    	"label": 	"Sensor Node 6",
-	    	"color": 	"#bd202c",
-	    	"size": 	10,
-	    	"x": 		125,
+	    	"x": 		160,
 	    	"y": 		50
 	    	}
-	    },
-	    {
-	    "id": "sn7",
-	    "params": {
-	    	"label": 	"Sensor Node 7",
-	    	"color": 	"#bd202c",
-	    	"size": 	10,
-	    	"x": 		125,
-	    	"y": 		75
-	    	}
-	    },
-	    {
-	    "id": "sn8",
-	    "params": {
-	    	"label": 	"Sensor Node 8",
-	    	"color": 	"#bd202c",
-	    	"size": 	10,
-	    	"x": 		150,
-	    	"y": 		33
-	    	}
-	    },
-	    {
-	    "id": "sn9",
-	    "params": {
-	    	"label": 	"Sensor Node 9",
-	    	"color": 	"#bd202c",
-	    	"size": 	10,
-	    	"x": 		150,
-	    	"y": 		66
-	    	}
-		}
+	    }
 	
 	],
 	"edges": []
