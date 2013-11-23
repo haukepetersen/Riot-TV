@@ -1,24 +1,6 @@
 {
 	"nodes": [
 	     {
-	    "id": "dummy_tl",
-	    "params": {
-	    	"color": 	"#000",
-	    	"size": 	1,
-	    	"x": 		0,
-	    	"y": 		0
-	    	}
-	    },
-	    {
-	    "id": "dummy_br",
-	    "params": {
-	    	"color": 	"#000",
-	    	"size": 	1,
-	    	"x": 		175,
-	    	"y": 		80
-	    	}
-	    },
-	    {
 	    "id": "146",
 	    "params": {
 	    	"label": 	"Root",
