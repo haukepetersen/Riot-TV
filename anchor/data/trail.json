@@ -21,7 +21,7 @@
 	    {
 	    "id": "146",
 	    "params": {
-	    	"label": 	"Sensor Node 146 (Root)",
+	    	"label": 	"Root",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
 	    	"x": 		125,
@@ -31,7 +31,7 @@
 	    {
 	    "id": "147",
 	    "params": {
-	    	"label": 	"Sensor Node 147",
+	    	"label": 	"Node 147",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
 	    	"x": 		125,
@@ -41,7 +41,7 @@
 		{
 	    "id": "148",
 	    "params": {
-	    	"label": 	"Sensor Node 148",
+	    	"label": 	"Node 148",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
 	    	"x": 		100,
@@ -51,7 +51,7 @@
 	    {
 	    "id": "149",
 	    "params": {
-	    	"label": 	"Sensor Node 149 (Atk)",
+	    	"label": 	"Attacker",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
 	    	"x": 		125,
@@ -61,7 +61,7 @@
 	    {
 	    "id": "150",
 	    "params": {
-	    	"label": 	"Sensor Node 150",
+	    	"label": 	"Node 150",
 	    	"color": 	"#bd202c",
 	    	"size": 	10,
 	    	"x": 		150,
