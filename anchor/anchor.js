@@ -128,14 +128,14 @@ io.sockets.on('connection', function(socket) {
 	socket.on('console', function(data) {
 		data.dst.forEach (function(id) {
 			if (reporters[id]) {
-				reporters[id].sendMessage({'data': data.data});
+				reporters[id].socket.sendMessage({'data': data.data});
 
 			}
 		});
 	});
 	socket.emit('init', graphData);
 	for (rep in reporters) {
-		publish('online', {'id': rep, 'info': {}});
+		publish('online', {'id': rep, 'station': reporters[rep].station, 'info': {}});
 	}
 });
 
@@ -156,7 +156,7 @@ var serverSocket = net.createServer(function(basicSocket) {
 	sock = new JsonSocket(basicSocket);
 	// create reporter id
 	var id = basicSocket.remoteAddress + ":" + basicSocket.remotePort;
-	reporters[id] = sock;
+	reporters[id] = {'socket': sock};
 	// publish reporter to frontend
 	publish('online', {'id': id, 'info': {}});		// TODO: send more information as node id etc from condig file
 
@@ -272,18 +272,19 @@ function reportToRedis(event, nodeid) {
  * - m: ID X received msg TYPE from ID Y #color
  * - p_s: ID X selected ID Y as parent
  * - p_d: ID X deleted ID Y as parent
- * - d: ID X received event EID #color
+ * - d: ID X received event EID
+ * - i: ID X ignores ID Y		- no output for the future when messages from Y to X are send
+ * - r: ID X selected rank N 	- rank in paranthesis behind node name in graph
 
  * TODO
- * - r: ID X selected rank N 	- rank in paranthesis behind node name in graph
- * - i: ID X ignores ID Y		- roter blitz (dünner roter blitz?) -> keine Ausgabe
+ * - station: name 				- group reporters into their tv stations
  * 
  * @param line		The string that was received (without trailing \n)
  */
 function scanRawData(data) {
 	// parse line and forward event object
 	var res = undefined;
-	var find = data.data.match(/(m:|p_s:|p_d:|d:|r:|i:).*/g);
+	var find = data.data.match(/(m:|p_s:|p_d:|d:|r:|i:|station:).*/g);
 	if (find != null) {
 		console.log("VIS: Interesting String found: " + find[0]);
 		var part = find[0].split(" ");
@@ -326,18 +327,22 @@ function scanRawData(data) {
 				}
 			break;
 			case "d:": 			// when a UDP packet (event) is received
-				if (part.length >= 5) {
+				if (part.length >= 6) {
 					reportToRedis(part[5], part[2]);
 				}
 			break;
 			case "r:":
-				if (part.length >= 5) {
-					publish('rank', {'id': part[1], 'rank': part[5]});
+				if (part.length >= 6) {
+					publish('rank', {'id': part[2], 'rank': part[5]});
 				}
 			break;
 			case "i:":
-				if (part.length >= 5) {
-					publsh('ignore', {'id': part[1], 'ignores': part[5]});
+				if (part.length >= 6) {
+					publish('ignore', {'id': part[2], 'ignores': part[5]});
+				}
+			case "station:":
+				if (part.length >= 2) {
+					publish('stationSet', {'id': data.node, 'station': part[1]});
 				}
 			break;
 		}

@@ -355,7 +355,11 @@
 	sigma.publicPrototype.setRank = function(nodeId, rank) {
 		var node = this.change.getNode(nodeId);
 		if (node) {
-			node.label =  "(" + rank + ") " + node.label;
+			if (node.label.match(/\(\d+\)/)) {
+				node.label = node.label.replace(/\(\d+\)/, "(" + rank + ")");
+			} else {
+				node.label += " (" + rank + ")";
+			}
 		}
 	}
 

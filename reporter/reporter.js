@@ -89,7 +89,6 @@ socket.on('error', function() {
 });
 
 socket.on('message', function(data) {
-	console.log(data);
 	console.log('COMMAND: ' + data.data);
 	uart.write(data.data + "\n");
 });
