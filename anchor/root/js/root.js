@@ -199,7 +199,7 @@ function reporterAdd(data) {
 		stationAssign(data);
 	}
 	if (activeStation.reps[data.id]) {
-		reporters[data.id].dom.setClass('active');
+		reporters[data.id].dom.addClass('active');
 		activeReporters[data.id] = 'active';
 	}
 	stationUpdate();
