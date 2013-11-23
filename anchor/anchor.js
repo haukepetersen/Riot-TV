@@ -347,6 +347,7 @@ function scanRawData(data) {
 				if (part.length >= 6) {
 					publish('ignore', {'id': part[2], 'ignores': part[5]});
 				}
+			break;
 			case "station:":
 				if (part.length >= 2) {
 					console.log('will now set a new station for ' + data.node + ": " + part[1]);
