@@ -196,7 +196,7 @@ function reporterAdd(data) {
 	// add node to stations
 	stations.all.reps[data.id] = reporters[data.id];
 	if (data.station) {
-		stationAssign(data.station, data.id);
+		stationAssign(data);
 	}
 	stationUpdate();
 };
@@ -207,6 +207,7 @@ function reporterRemove(data) {
 		reporter.dom.remove();
 		for (sid in stations) {
 			delete stations[sid].reps[data.id];
+			delete activeStation.reps[data.id];
 		}
 		delete activeReporters[data.id];
 		delete reporters[data.id];

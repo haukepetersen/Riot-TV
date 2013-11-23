@@ -16,7 +16,7 @@
 /**
  * Configuration
  */
-const DEFAULT_ANCHOR_HOST = 'uhu';		/* address of the anchor */
+const DEFAULT_ANCHOR_HOST = 'localhost';		/* address of the anchor */
 const DEFAULT_ANCHOR_PORT = 23511;				/* targeted port on the anchor */
 const DEFAULT_SERIAL_PORT= '/dev/ttyUSB0';		/* serial port to open */
 

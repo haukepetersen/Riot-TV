@@ -160,9 +160,9 @@ var serverSocket = net.createServer(function(basicSocket) {
 	sock = new JsonSocket(basicSocket);
 	// create reporter id
 	var id = basicSocket.remoteAddress + ":" + basicSocket.remotePort;
-	reporters[id] = {'socket': sock};
+	reporters[id] = {'socket': sock, 'station': false, 'info': {}};
 	// publish reporter to frontend
-	publish('online', {'id': id, 'info': {}});		// TODO: send more information as node id etc from condig file
+	publish('online', {'id': id, 'station': false, 'info': {}});
 
 	sock.on('message', function(data) {
 		if (data.type == 'raw') {
@@ -346,6 +346,8 @@ function scanRawData(data) {
 				}
 			case "station:":
 				if (part.length >= 2) {
+					console.log('will now set a new station for ' + data.node + ": " + part[1]);
+					reporters[data.node].station = part[1];
 					publish('stationSet', {'id': data.node, 'station': part[1]});
 				}
 			break;
