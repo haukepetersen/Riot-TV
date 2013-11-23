@@ -71,12 +71,12 @@ var nat = {
 function parseLayout(url) {
 	var layout = url.match(/[a-zA-Z0-9]+$/g);
 	if (layout != null) {
-		var layoutfile = LAYOUT_DIR + "/" + layout + ".json";
+		var layoutfile = LAYOUT_DIR + "/" + layout[0] + ".json";
 		// try to read layout file
 		fs.readFile(layoutfile, 'utf8', function (err, data) {
 			if (err) {
-				// console.log('INFO:   Unable to locate layout: ' + layoutfile);
-				// console.log('INFO:   Fallback to default layout: ' + DEFAULT_LAYOUT);
+				console.log('INFO:   Unable to locate layout: ' + layoutfile);
+				console.log('INFO:   Fallback to default layout: ' + DEFAULT_LAYOUT);
 				loadDefaultLayout();
 				return;
 			} 
